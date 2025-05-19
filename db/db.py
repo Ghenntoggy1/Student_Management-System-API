@@ -15,3 +15,10 @@ engine = create_engine(f"sqlitecloud://{SQLITE_PROJECT_ID}.sqlite.cloud:{SQLITE_
 SessionLocal = sessionmaker(bind=engine)
 
 Base = declarative_base()
+
+def get_database_session():
+    database_session = SessionLocal()
+    try:
+        yield database_session
+    finally:
+        database_session.close()
