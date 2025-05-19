@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 
 from db.db import SessionLocal
 from services import service
-from db.schemas import GenericResponse, UserLogin, UserRequest, Token
+from schemas.schemas import GenericResponse, UserLogin, UserRequest, Token
 import auth.auth as auth_layer
-from enums.enums import RolesEnum, JWTValidationResultsEnum
+from enums.db_enums import RolesEnum
 
 app = FastAPI()
 

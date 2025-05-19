@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 from datetime import date as _date, datetime as _datetime
-from enums.enums import RolesEnum, SessionStatusEnum, AttendanceStatusEnum
+from enums.db_enums import RolesEnum, SessionStatusEnum, AttendanceStatusEnum
 from typing import Generic, TypeVar, Optional
 
 T = TypeVar('T')

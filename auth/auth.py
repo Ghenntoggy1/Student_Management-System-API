@@ -3,7 +3,7 @@ import os
 from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
 from datetime import timedelta, timezone, datetime
-from enums.enums import JWTValidationResultsEnum
+from enums.server_enums import JWTValidationResultsEnum
 
 load_dotenv()
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")

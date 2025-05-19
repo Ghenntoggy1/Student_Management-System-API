@@ -1,11 +1,18 @@
 from fastapi import HTTPException
 from starlette import status
-from db import models, schemas
 import bcrypt
 from sqlalchemy.orm import Session
-from db.schemas import Token
+
+from models.user_model import UserModel
+from models.group_model import GroupModel
+from models.session_model import SessionModel
+from models.course_model import CourseModel
+from models.attendance_model import AttendanceModel
+from models.course_group_model import CourseGroupModel
+from models.student_group_model import StudentGroupModel
+from schemas.schemas import Token, UserRequest, UserResponse
 from auth.auth import decode_access_token
-from enums.enums import JWTValidationResultsEnum
+from enums.server_enums import JWTValidationResultsEnum
 
 
 def jwt_validation_response(jwt_token: Token):
@@ -33,17 +40,17 @@ def jwt_validation_response(jwt_token: Token):
     return decoded_token
 
 def get_all_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
+    return db.query(UserModel).offset(skip).limit(limit).all()
 
 def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.Email == email).first()
+    return db.query(UserModel).filter(UserModel.Email == email).first()
 
-def add_user(db: Session, user: schemas.UserRequest):
+def add_user(db: Session, user: UserRequest):
     salt = bcrypt.gensalt()
     password_bytes = user.password.encode('utf-8')
     hashed_password = bcrypt.hashpw(password_bytes, salt).decode('utf-8')
 
-    db_user = models.User(
+    db_user = UserModel(
         Role=user.role,
         FirstName=user.first_name,
         LastName=user.last_name,
