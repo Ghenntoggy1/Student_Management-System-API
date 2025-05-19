@@ -23,3 +23,7 @@ async def root():
 async def get_all_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_database_session)):
     users = service.get_all_users(skip=skip, limit=limit, db=db)
     return users
+
+@app.post("/add_user/", response_model=schemas.UserResponse)
+async def add_user(user: schemas.UserRequest, db: Session = Depends(get_database_session)):
+    return service.add_user(db=db, user=user)

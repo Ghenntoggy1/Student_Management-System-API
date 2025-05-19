@@ -10,6 +10,13 @@ class UserResponse(BaseModel):
     email: str = Field(..., alias='Email')
     password: str = Field(..., alias='Password')
 
+class UserRequest(BaseModel):
+    role: RolesEnum = Field(..., alias='Role')
+    first_name: str = Field(..., alias='FirstName')
+    last_name: str = Field(..., alias='LastName')
+    email: str = Field(..., alias='Email')
+    password: str = Field(..., alias='Password')
+
 class GroupResponse(BaseModel):
     group_id: int = Field(..., alias='GroupId')
     name: str = Field(..., alias='Name')
