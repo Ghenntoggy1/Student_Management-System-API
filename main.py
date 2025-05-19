@@ -48,6 +48,8 @@ async def login(user: UserLogin, db: Session = Depends(get_database_session)):
 @app.get("/users/", response_model=GenericResponse[list[UserResponse]])
 async def get_all_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_database_session)):
     users = service.get_all_users(skip=skip, limit=limit, db=db)
+    if not users:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No users found.")
 
     response = GenericResponse(
         status_code=status.HTTP_200_OK,
@@ -56,9 +58,25 @@ async def get_all_users(skip: int = 0, limit: int = 100, db: Session = Depends(g
     )
     return response
 
-@app.get("/users/{user_id}", response_model=GenericResponse[UserResponse])
+@app.get("/users/id={user_id}", response_model=GenericResponse[UserResponse])
 async def get_user_by_id(user_id: int, db: Session = Depends(get_database_session)):
     user = service.get_user_by_id(user_id=user_id, db=db)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
+
+    response = GenericResponse(
+        status_code=status.HTTP_200_OK,
+        message="User retrieved successfully",
+        data=user
+    )
+    return response
+
+@app.get("/users/email={email}", response_model=GenericResponse[UserResponse])
+async def get_user_by_email(email: str, db: Session = Depends(get_database_session)):
+    user = service.get_user_by_email(email=email, db=db)
+    if not user:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found.")
+
     response = GenericResponse(
         status_code=status.HTTP_200_OK,
         message="User retrieved successfully",
@@ -82,4 +100,5 @@ async def add_user(user: UserRequest, jwt_token: Token, db: Session = Depends(ge
         data=db_user
     )
     return response
+
 
