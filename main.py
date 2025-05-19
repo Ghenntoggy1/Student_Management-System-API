@@ -17,7 +17,7 @@ def get_database_session():
 
 @app.get("/")
 async def root():
-    return {"message": "Hello World"}
+    return {"message": "Welcome to Student Management System!"}
 
 @app.get("/users/", response_model=list[schemas.UserResponse])
 async def get_all_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_database_session)):

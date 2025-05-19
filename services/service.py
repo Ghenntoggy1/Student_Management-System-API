@@ -18,7 +18,7 @@ def add_user(db: Session, user: schemas.UserRequest):
         Email=user.email,
         Password=hashed_password
     )
-    print(db_user)
+
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
