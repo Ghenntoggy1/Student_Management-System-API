@@ -1,46 +1,46 @@
-from pydantic import BaseModel
-from datetime import date, datetime
+from pydantic import BaseModel, Field
+from datetime import date as _date, datetime as _datetime
 from enums.enums import RolesEnum, SessionStatusEnum, AttendanceStatusEnum
 
 class UserResponse(BaseModel):
-    user_id: int
-    role: RolesEnum
-    first_name: str
-    last_name: str
-    email: str
-    password: str
+    user_id: int = Field(..., alias='UserId')
+    role: RolesEnum = Field(..., alias='Role')
+    first_name: str = Field(..., alias='FirstName')
+    last_name: str = Field(..., alias='LastName')
+    email: str = Field(..., alias='Email')
+    password: str = Field(..., alias='Password')
 
 class GroupResponse(BaseModel):
-    group_id: int
-    code: str
+    group_id: int = Field(..., alias='GroupId')
+    name: str = Field(..., alias='Name')
 
 class CourseResponse(BaseModel):
-    course_id: int
-    name: str
-    professor_name: str
+    course_id: int = Field(..., alias='CourseId')
+    name: str = Field(..., alias='Name')
+    professor_id: str = Field(..., alias='ProfessorId')
 
 class CourseGroupResponse(BaseModel):
-    course_group_id: int
-    course_id: int
-    group_id: int
+    id: int = Field(..., alias='id')
+    course_id: int = Field(..., alias='CourseId')
+    group_id: int = Field(..., alias='GroupId')
 
 class StudentGroupResponse(BaseModel):
-    id: int
-    student_id: int
-    group_id: int
+    id: int = Field(..., alias='id')
+    student_id: int = Field(..., alias='StudentId')
+    group_id: int = Field(..., alias='GroupId')
 
 class SessionResponse(BaseModel):
-    session_id: int
-    course_id: int
-    room: str
-    date: date
-    start_time: datetime
-    end_time: datetime
-    status: SessionStatusEnum
+    session_id: int = Field(..., alias='SessionId')
+    course_id: int = Field(..., alias='CourseId')
+    room: str = Field(..., alias='Room')
+    date: _date = Field(..., alias='Date')
+    start_time: _datetime = Field(..., alias='StartTime')
+    end_time: _datetime = Field(..., alias='EndTime')
+    status: SessionStatusEnum = Field(..., alias='Status')
 
 class AttendanceResponse(BaseModel):
-    attendance_id: int
-    session_id: int
-    student_id: int
-    time: datetime
-    status: AttendanceStatusEnum
+    attendance_id: int = Field(..., alias='AttendanceId')
+    session_id: int = Field(..., alias='SessionId')
+    student_id: int = Field(..., alias='StudentId')
+    time: _datetime = Field(..., alias='Time')
+    status: AttendanceStatusEnum = Field(..., alias='Status')
