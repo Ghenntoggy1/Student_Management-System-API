@@ -2,6 +2,17 @@ from pydantic import BaseModel, Field
 from datetime import date as _date, datetime as _datetime
 from enums.enums import RolesEnum, SessionStatusEnum, AttendanceStatusEnum
 
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+class Token(BaseModel):
+    access_token: str
+
+class TokenData(BaseModel):
+    user_id: int = Field(..., alias='UserId')
+    role: RolesEnum = Field(..., alias='Role')
+
 class UserResponse(BaseModel):
     user_id: int = Field(..., alias='UserId')
     role: RolesEnum = Field(..., alias='Role')
