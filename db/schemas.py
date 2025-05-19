@@ -1,6 +1,9 @@
 from pydantic import BaseModel, Field
 from datetime import date as _date, datetime as _datetime
 from enums.enums import RolesEnum, SessionStatusEnum, AttendanceStatusEnum
+from typing import Generic, TypeVar, Optional
+
+T = TypeVar('T')
 
 class UserLogin(BaseModel):
     email: str
@@ -8,11 +11,16 @@ class UserLogin(BaseModel):
 
 class Token(BaseModel):
     access_token: str
-    token_type: str
+    token_type: str = Field(default='bearer')
 
 class TokenData(BaseModel):
     user_id: int = Field(..., alias='UserId')
     role: RolesEnum = Field(..., alias='Role')
+
+class GenericResponse(BaseModel, Generic[T]):
+    status_code: int
+    message: str
+    data: Optional[T] = None
 
 class UserResponse(BaseModel):
     user_id: int = Field(..., alias='UserId')
