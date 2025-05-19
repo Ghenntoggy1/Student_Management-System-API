@@ -30,7 +30,7 @@ async def login(user: schemas.UserLogin, db: Session = Depends(get_database_sess
         return {"message": "Invalid credentials"}
 
     access_token = auth_layer.create_access_token(data={"sub": user_obj.Email, "role": user_obj.Role})
-    return {"access_token": access_token, "token_type": "bearer"}
+    return schemas.Token(access_token=access_token, token_type="bearer")
 
 @app.get("/users/", response_model=list[schemas.UserResponse])
 async def get_all_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_database_session)):
