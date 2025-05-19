@@ -6,6 +6,9 @@ from sqlalchemy.orm import Session
 def get_all_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.User).offset(skip).limit(limit).all()
 
+def get_user_by_email(db: Session, email: str):
+    return db.query(models.User).filter(models.User.Email == email).first()
+
 def add_user(db: Session, user: schemas.UserRequest):
     salt = bcrypt.gensalt()
     password_bytes = user.password.encode('utf-8')
