@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from db.db import SessionLocal
 from services import service
-from schemas.schemas import GenericResponse, UserLogin, UserRequest, Token
+from schemas.schemas import GenericResponse, UserLogin, UserRequest, Token, UserResponse
 import auth.auth as auth_layer
 from enums.db_enums import RolesEnum
 
@@ -45,7 +45,7 @@ async def login(user: UserLogin, db: Session = Depends(get_database_session)):
     )
     return response
 
-@app.get("/users/", response_model=GenericResponse)
+@app.get("/users/", response_model=GenericResponse[list[UserResponse]])
 async def get_all_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_database_session)):
     users = service.get_all_users(skip=skip, limit=limit, db=db)
 
@@ -56,7 +56,17 @@ async def get_all_users(skip: int = 0, limit: int = 100, db: Session = Depends(g
     )
     return response
 
-@app.post("/add_user/", response_model=GenericResponse)
+@app.get("/users/{user_id}", response_model=GenericResponse[UserResponse])
+async def get_user_by_id(user_id: int, db: Session = Depends(get_database_session)):
+    user = service.get_user_by_id(user_id=user_id, db=db)
+    response = GenericResponse(
+        status_code=status.HTTP_200_OK,
+        message="User retrieved successfully",
+        data=user
+    )
+    return response
+
+@app.post("/add_user/", response_model=GenericResponse[UserResponse])
 async def add_user(user: UserRequest, jwt_token: Token, db: Session = Depends(get_database_session)):
     decoded_token = service.jwt_validation_response(jwt_token)
     jwt_token_role: RolesEnum = decoded_token.get("role")
