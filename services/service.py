@@ -42,6 +42,9 @@ def jwt_validation_response(jwt_token: Token):
 def get_all_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(UserModel).offset(skip).limit(limit).all()
 
+def get_user_by_id(db: Session, user_id: int):
+    return db.query(UserModel).filter(UserModel.UserId == user_id).first()
+
 def get_user_by_email(db: Session, email: str):
     return db.query(UserModel).filter(UserModel.Email == email).first()
 
