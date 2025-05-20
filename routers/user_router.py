@@ -23,12 +23,18 @@ async def add_user(user: UserRequest, jwt_token: TokenData = Depends(jwt_validat
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="You do not have required permission to perform this action."
         )
-    db_user = service.add_user(db=db, user=user)
-    response = GenericResponse(
-        status_code=status.HTTP_201_CREATED,
-        message="User added successfully.",
-        data=db_user
-    )
+    if service.validate_user(user=user, db=db):
+        db_user = service.add_user(db=db, user=user)
+        response = GenericResponse(
+            status_code=status.HTTP_201_CREATED,
+            message="User added successfully.",
+            data=db_user
+        )
+    else:
+        response = GenericResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            message="User not added successfully."
+        )
     return response
 
 
@@ -111,3 +117,6 @@ async def get_user_by_email(email: str, jwt_token: TokenData = Depends(jwt_valid
     )
     return response
 
+# U - Update
+# Update single User
+# @user_router.put()
