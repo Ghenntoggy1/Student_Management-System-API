@@ -158,3 +158,31 @@ async def update_user(user_id: int, user: UserRequest, jwt_token: TokenData = De
         data=db_user
     )
     return response
+
+# D - Delete
+# Delete single User
+@user_router.delete("/delete_user/id={user_id}", response_model=GenericResponse[UserResponse])
+async def delete_user(user_id: int, jwt_token: TokenData = Depends(jwt_validation_response), db: Session = Depends(get_database_session)):
+    jwt_token_role: RolesEnum = jwt_token.role
+    if RolesEnum.admin != jwt_token_role:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="You do not have required permission to perform this action.",
+            headers = {
+                "WWW-Authenticate": "Bearer"
+            },
+        )
+    db_user = service.get_user_by_id(user_id=user_id, db=db)
+    if not db_user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found."
+        )
+    db.delete(db_user)
+    db.commit()
+    response = GenericResponse(
+        status_code=status.HTTP_200_OK,
+        message="User deleted successfully.",
+        data=db_user
+    )
+    return response
