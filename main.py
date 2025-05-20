@@ -6,6 +6,7 @@ from starlette.responses import JSONResponse
 from routers.course_router import course_router
 from routers.user_router import user_router
 from routers.auth_router import auth_router
+from routers.session_router import session_router
 from schemas.schemas import GenericResponse
 
 app = FastAPI()
@@ -24,3 +25,4 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
 app.include_router(router=auth_router)
 app.include_router(router=user_router)
 app.include_router(router=course_router)
+app.include_router(router=session_router)

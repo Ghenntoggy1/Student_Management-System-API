@@ -3,7 +3,7 @@ from starlette import status
 import bcrypt
 from sqlalchemy.orm import Session
 
-from enums.db_enums import RolesEnum
+from enums.db_enums import RolesEnum, SessionStatusEnum
 from models.user_model import UserModel
 from models.group_model import GroupModel
 from models.session_model import SessionModel
@@ -11,7 +11,7 @@ from models.course_model import CourseModel
 from models.attendance_model import AttendanceModel
 from models.course_group_model import CourseGroupModel
 from models.student_group_model import StudentGroupModel
-from schemas.schemas import Token, UserRequest, UserResponse, CourseRequest
+from schemas.schemas import Token, UserRequest, UserResponse, CourseRequest, SessionRequest
 from auth.auth import decode_access_token, oauth2_scheme
 from enums.server_enums import JWTValidationResultsEnum
 
@@ -101,6 +101,39 @@ def validate_course(course: CourseRequest, db: Session):
         )
     return True
 
+def validate_session(session: SessionRequest, db: Session):
+    if session.course_id == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Course id cannot be empty."
+        )
+    if session.room == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Room cannot be empty."
+        )
+    if session.date == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Date cannot be empty."
+        )
+    if session.start_time == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Start time cannot be empty."
+        )
+    if session.end_time == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="End time cannot be empty."
+        )
+    if db.query(CourseModel).filter(CourseModel.CourseId == session.course_id).first() is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Course with this id does not exist."
+        )
+    return True
+
 def get_all_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(UserModel).offset(skip).limit(limit).all()
 
@@ -143,6 +176,27 @@ def get_all_courses(db: Session, skip: int = 0, limit: int = 100):
 
 def get_course_by_id(db: Session, course_id: int):
     return db.query(CourseModel).filter(CourseModel.CourseId == course_id).first()
+
+def add_session(db: Session, session: SessionRequest):
+    db_session = SessionModel(
+        CourseId=session.course_id,
+        Room=session.room,
+        Date=session.date.strftime("%Y-%m-%d"),
+        StartTime=session.start_time.strftime("%H:%M"),
+        EndTime=session.end_time.strftime("%H:%M"),
+        Status=SessionStatusEnum.not_started
+
+    )
+    db.add(db_session)
+    db.commit()
+    db.refresh(db_session)
+    return db_session
+
+def get_all_sessions(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(SessionModel).offset(skip).limit(limit).all()
+
+def get_session_by_id(db: Session, session_id: int):
+    return db.query(SessionModel).filter(SessionModel.SessionId == session_id).first()
 
 def hash_password(password: str):
     salt = bcrypt.gensalt()
