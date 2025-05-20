@@ -45,7 +45,6 @@ def validate_user(user: UserRequest, db: Session):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="First name cannot be empty."
         )
-
     if user.last_name == "":
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -99,3 +98,9 @@ def add_user(db: Session, user: UserRequest):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def hash_password(password: str):
+    salt = bcrypt.gensalt()
+    password_bytes = password.encode('utf-8')
+    hashed_password = bcrypt.hashpw(password_bytes, salt).decode('utf-8')
+    return hashed_password

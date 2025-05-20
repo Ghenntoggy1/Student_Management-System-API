@@ -34,11 +34,11 @@ class UserResponse(BaseModel):
     password: str = Field(..., alias='Password')
 
 class UserRequest(BaseModel):
-    role: RolesEnum = Field(..., alias='Role')
-    first_name: str = Field(..., alias='FirstName')
-    last_name: str = Field(..., alias='LastName')
-    email: str = Field(..., alias='Email')
-    password: str = Field(..., alias='Password')
+    role: Optional[RolesEnum] = Field(..., alias='Role')
+    first_name: Optional[str] = Field(..., alias='FirstName')
+    last_name: Optional[str] = Field(..., alias='LastName')
+    email: Optional[str] = Field(..., alias='Email')
+    password: Optional[str] = Field(..., alias='Password')
 
 class GroupResponse(BaseModel):
     group_id: int = Field(..., alias='GroupId')
