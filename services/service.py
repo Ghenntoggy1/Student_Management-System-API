@@ -1,4 +1,4 @@
-from fastapi import HTTPException
+from fastapi import HTTPException, Depends
 from starlette import status
 import bcrypt
 from sqlalchemy.orm import Session
@@ -11,12 +11,12 @@ from models.attendance_model import AttendanceModel
 from models.course_group_model import CourseGroupModel
 from models.student_group_model import StudentGroupModel
 from schemas.schemas import Token, UserRequest, UserResponse
-from auth.auth import decode_access_token
+from auth.auth import decode_access_token, oauth2_scheme
 from enums.server_enums import JWTValidationResultsEnum
 
 
-def jwt_validation_response(jwt_token: Token):
-    decoded_token = decode_access_token(token=jwt_token.access_token)
+def jwt_validation_response(jwt_token: str = Depends(oauth2_scheme)):
+    decoded_token = decode_access_token(token=jwt_token)
     if decoded_token == JWTValidationResultsEnum.is_expired:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

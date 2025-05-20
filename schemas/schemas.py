@@ -14,8 +14,11 @@ class Token(BaseModel):
     token_type: str = Field(default='bearer')
 
 class TokenData(BaseModel):
-    user_id: int = Field(..., alias='UserId')
-    role: RolesEnum = Field(..., alias='Role')
+    sub: str
+    name: str
+    role: RolesEnum
+    iat: int
+    exp: int
 
 class GenericResponse(BaseModel, Generic[T]):
     status_code: int
