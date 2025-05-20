@@ -3,6 +3,7 @@ from starlette import status
 import bcrypt
 from sqlalchemy.orm import Session
 
+from enums.db_enums import RolesEnum
 from models.user_model import UserModel
 from models.group_model import GroupModel
 from models.session_model import SessionModel
@@ -10,7 +11,7 @@ from models.course_model import CourseModel
 from models.attendance_model import AttendanceModel
 from models.course_group_model import CourseGroupModel
 from models.student_group_model import StudentGroupModel
-from schemas.schemas import Token, UserRequest, UserResponse
+from schemas.schemas import Token, UserRequest, UserResponse, CourseRequest
 from auth.auth import decode_access_token, oauth2_scheme
 from enums.server_enums import JWTValidationResultsEnum
 
@@ -72,6 +73,34 @@ def validate_user(user: UserRequest, db: Session):
         )
     return True
 
+def validate_course(course: CourseRequest, db: Session):
+    if course.name == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Course name cannot be empty."
+        )
+    if course.professor_id == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Course professor cannot be empty."
+        )
+    if db.query(CourseModel).filter(CourseModel.Name == course.name).first() is not None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Course with this name already exists."
+        )
+    if db.query(UserModel).filter(UserModel.UserId == course.professor_id).first() is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Course professor does not exist."
+        )
+    if db.query(UserModel).filter(UserModel.UserId == course.professor_id).first().Role != RolesEnum.professor:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This User is not a professor."
+        )
+    return True
+
 def get_all_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(UserModel).offset(skip).limit(limit).all()
 
@@ -98,6 +127,22 @@ def add_user(db: Session, user: UserRequest):
     db.commit()
     db.refresh(db_user)
     return db_user
+
+def add_course(db: Session, course: CourseRequest):
+    db_course = CourseModel(
+        Name=course.name,
+        ProfessorId=course.professor_id
+    )
+    db.add(db_course)
+    db.commit()
+    db.refresh(db_course)
+    return db_course
+
+def get_all_courses(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(CourseModel).offset(skip).limit(limit).all()
+
+def get_course_by_id(db: Session, course_id: int):
+    return db.query(CourseModel).filter(CourseModel.CourseId == course_id).first()
 
 def hash_password(password: str):
     salt = bcrypt.gensalt()

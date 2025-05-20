@@ -59,7 +59,10 @@ async def get_all_users(jwt_token: TokenData = Depends(jwt_validation_response),
 
     users = service.get_all_users(skip=skip, limit=limit, db=db)
     if not users:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No users found.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="No users found."
+        )
 
     response = GenericResponse(
         status_code=status.HTTP_200_OK,

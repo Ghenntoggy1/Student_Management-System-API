@@ -40,6 +40,10 @@ class UserRequest(BaseModel):
     email: Optional[str] = Field(..., alias='Email')
     password: Optional[str] = Field(..., alias='Password')
 
+class CourseRequest(BaseModel):
+    name: str = Field(..., alias='Name')
+    professor_id: int = Field(..., alias='ProfessorId')
+
 class GroupResponse(BaseModel):
     group_id: int = Field(..., alias='GroupId')
     name: str = Field(..., alias='Name')
@@ -47,7 +51,7 @@ class GroupResponse(BaseModel):
 class CourseResponse(BaseModel):
     course_id: int = Field(..., alias='CourseId')
     name: str = Field(..., alias='Name')
-    professor_id: str = Field(..., alias='ProfessorId')
+    professor_id: int = Field(..., alias='ProfessorId')
 
 class CourseGroupResponse(BaseModel):
     id: int = Field(..., alias='id')
