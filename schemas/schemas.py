@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from datetime import date as _date, datetime as _datetime, time as _time
+from datetime import date as _date, time as _time
 from enums.db_enums import RolesEnum, SessionStatusEnum, AttendanceStatusEnum
 from typing import Generic, TypeVar, Optional
 
@@ -52,6 +52,12 @@ class SessionRequest(BaseModel):
     end_time: _time = Field(..., alias='EndTime')
     status: SessionStatusEnum = Field(..., alias='Status')
 
+class AttendanceRequest(BaseModel):
+    session_id: int = Field(..., alias='SessionId')
+    student_id: int = Field(..., alias='StudentId')
+    time: Optional[_time] = Field(None, alias='Time')
+    status: AttendanceStatusEnum = Field(..., alias='Status')
+
 class GroupResponse(BaseModel):
     group_id: int = Field(..., alias='GroupId')
     name: str = Field(..., alias='Name')
@@ -84,5 +90,5 @@ class AttendanceResponse(BaseModel):
     attendance_id: int = Field(..., alias='AttendanceId')
     session_id: int = Field(..., alias='SessionId')
     student_id: int = Field(..., alias='StudentId')
-    time: _datetime = Field(..., alias='Time')
+    time: _time = Field(..., alias='Time')
     status: AttendanceStatusEnum = Field(..., alias='Status')
