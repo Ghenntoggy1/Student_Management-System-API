@@ -3,8 +3,7 @@ from sqlalchemy.orm import Session
 from starlette import status
 
 from enums.db_enums import RolesEnum
-from models.user_model import UserModel
-from schemas.schemas import GenericResponse, TokenData, CourseResponse, CourseRequest, SessionResponse, SessionRequest
+from schemas.schemas import GenericResponse, TokenData, SessionResponse, SessionRequest
 from services import service
 from db.db import get_database_session
 from services.service import jwt_validation_response, validate_session
