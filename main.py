@@ -3,6 +3,7 @@ from fastapi.security import OAuth2PasswordBearer
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
+from routers.course_router import course_router
 from routers.user_router import user_router
 from routers.auth_router import auth_router
 from schemas.schemas import GenericResponse
@@ -22,4 +23,4 @@ async def custom_http_exception_handler(request: Request, exc: HTTPException):
 
 app.include_router(router=auth_router)
 app.include_router(router=user_router)
-
+app.include_router(router=course_router)
