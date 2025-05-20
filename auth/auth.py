@@ -1,16 +1,18 @@
+import bcrypt
 import jwt
 import os
 from dotenv import load_dotenv
 from fastapi.security import OAuth2PasswordBearer
 from datetime import timedelta, timezone, datetime
 from enums.server_enums import JWTValidationResultsEnum
+from schemas.schemas import TokenData
 
 load_dotenv()
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 JWT_ALGORITHM = os.getenv("JWT_ALGORITHM")
 JWT_EXPIRY_TIME_MINUTES = float(os.getenv("JWT_EXPIRY_TIME_MINUTES"))
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login/", auto_error=False)
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
@@ -31,15 +33,15 @@ def decode_access_token(token: str):
         decoded_token = jwt.decode(jwt=token,
                                    key=JWT_SECRET_KEY,
                                    algorithms=[JWT_ALGORITHM])
-        return decoded_token
+        return TokenData(**decoded_token)
     except jwt.ExpiredSignatureError:
         return JWTValidationResultsEnum.is_expired
-    except jwt.InvalidTokenError:
-        return JWTValidationResultsEnum.is_invalid
     except jwt.InvalidSignatureError:
         return JWTValidationResultsEnum.invalid_signature
+    except jwt.InvalidTokenError:
+        return JWTValidationResultsEnum.is_invalid
     except Exception as e:
         return "UNKNOWN_ERROR"
 
 def verify_password(plain_password, hashed_password):
-    return hashed_password == plain_password
+    return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
