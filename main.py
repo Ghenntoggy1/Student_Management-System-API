@@ -1,12 +1,24 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.security import OAuth2PasswordBearer
+from starlette.requests import Request
+from starlette.responses import JSONResponse
 
 from routers.user_router import user_router
 from routers.auth_router import auth_router
-
-
+from schemas.schemas import GenericResponse
 
 app = FastAPI()
+
+@app.exception_handler(HTTPException)
+async def custom_http_exception_handler(request: Request, exc: HTTPException):
+    return JSONResponse(
+        status_code=exc.status_code,
+        content=GenericResponse(
+            status_code=exc.status_code,
+            message=exc.detail,
+            data={}
+        ).model_dump()
+    )
 
 app.include_router(router=auth_router)
 app.include_router(router=user_router)
