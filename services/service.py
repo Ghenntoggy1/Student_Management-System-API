@@ -39,6 +39,40 @@ def jwt_validation_response(jwt_token: str = Depends(oauth2_scheme)):
         )
     return decoded_token
 
+def validate_user(user: UserRequest, db: Session):
+    if user.first_name == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="First name cannot be empty."
+        )
+
+    if user.last_name == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Last name cannot be empty."
+        )
+    if user.email == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email cannot be empty."
+        )
+    if user.password == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Password cannot be empty."
+        )
+    if user.role == "":
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Role cannot be empty."
+        )
+    if get_user_by_email(db=db, email=user.email):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="User with this email already exists."
+        )
+    return True
+
 def get_all_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(UserModel).offset(skip).limit(limit).all()
 
