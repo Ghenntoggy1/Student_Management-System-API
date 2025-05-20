@@ -1,17 +1,13 @@
-from urllib import request
-
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from starlette import status
-from starlette.requests import Request
-from starlette.responses import JSONResponse
 
 from enums.db_enums import RolesEnum
 from models.user_model import UserModel
-from schemas.schemas import GenericResponse, UserResponse, UserRequest, TokenData, CourseResponse, CourseRequest
+from schemas.schemas import GenericResponse, TokenData, CourseResponse, CourseRequest
 from services import service
 from db.db import get_database_session
-from services.service import jwt_validation_response, hash_password
+from services.service import jwt_validation_response
 
 course_router = APIRouter(
     prefix="/courses",
