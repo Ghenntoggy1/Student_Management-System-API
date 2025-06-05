@@ -24,6 +24,9 @@ This API implemented Create, Read, Update and Delete operations on entities, giv
 ### Error Handling:
 Most user edge-case interactions are handled in the backend application, thus making it harder to compromise the system in work.
 
+### Documentation:
+Implemented SwaggerUI Documentation in order to offer information about each endpoint, their request format type, response models, entities in the database, etc.
+
 ## Non-Functional Requirements:
 ### Security:
 By using JWT Token that is issued by backend application and used for endpoints access, is ensured only required users can access them, enhancing overall security of the app.
